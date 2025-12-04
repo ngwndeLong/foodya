@@ -89,4 +89,13 @@ public class RestaurantService {
         List<Restaurant> restaurants = restaurantRepository.findByRatingGreaterThanEqual(minRating);
         return restaurantMapper.toRestaurantResponseList(restaurants);
     }
+    // Delete restaurant by ID (for admin)
+    @Transactional(readOnly = false)
+    public void deleteRestaurantById(Long id) {
+        log.info("Deleting restaurant with id: {}", id);
+        if (!restaurantRepository.existsById(id)) {
+            throw new RuntimeException("Restaurant not found with id: " + id);
+        }
+        restaurantRepository.deleteById(id);
+    }
 }

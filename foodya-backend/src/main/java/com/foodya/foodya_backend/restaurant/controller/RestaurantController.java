@@ -132,4 +132,28 @@ public class RestaurantController {
         List<RestaurantResponse> restaurants = restaurantService.getRestaurantsByMinRating(minRating);
         return ResponseEntity.ok(restaurants);
     }
+
+
+    // Delete restaurant by ID (for admin)
+    @Operation(
+        summary = "Delete restaurant by ID",
+        description = "Delete a specific restaurant by its ID (admin only)"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Restaurant deleted successfully"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Restaurant not found"
+        )
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRestaurantById(
+            @Parameter(description = "Restaurant ID", example = "1")
+            @PathVariable Long id) {
+        restaurantService.deleteRestaurantById(id);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -1,6 +1,5 @@
 package com.foodya.foodya_backend.restaurant.dto;
 
-import com.foodya.foodya_backend.restaurant.dto.RestaurantResponse;
 import com.foodya.foodya_backend.restaurant.model.Restaurant;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +9,7 @@ import java.util.stream.Collectors;
 @Component
 public class RestaurantMapper {
 
+    // Transform Restaurant entity to RestaurantResponse DTO
     public RestaurantResponse toRestaurantResponse(Restaurant restaurant) {
         if (restaurant == null) {
             return null;
@@ -37,6 +37,7 @@ public class RestaurantMapper {
                 .build();
     }
 
+    // Transform list of Restaurant entities to list of RestaurantResponse DTOs
     public List<RestaurantResponse> toRestaurantResponseList(List<Restaurant> restaurants) {
         return restaurants.stream()
                 .map(this::toRestaurantResponse)
