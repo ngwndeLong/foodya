@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class MenuItemService {
      * Create new menu item for a restaurant
      */
     @Transactional
-    public MenuItemResponse createMenuItem(@NonNull Long restaurantId, MenuItemRequest request) {
+    public MenuItemResponse createMenuItem(@NonNull UUID  restaurantId, MenuItemRequest request) {
         log.info("Creating menu item '{}' for restaurant ID: {}", request.getName(), restaurantId);
 
         // Check if restaurant exists
@@ -61,7 +62,7 @@ public class MenuItemService {
      * Update existing menu item
      */
     @Transactional
-    public MenuItemResponse updateMenuItem(@NonNull Long menuItemId, MenuItemRequest request) {
+    public MenuItemResponse updateMenuItem(@NonNull UUID  menuItemId, MenuItemRequest request) {
         log.info("Updating menu item with ID: {}", menuItemId);
 
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
@@ -86,7 +87,7 @@ public class MenuItemService {
      */
     // hidden in UI, but
     @Transactional
-    public void softDeleteMenuItem(@NonNull Long menuItemId) {
+    public void softDeleteMenuItem(@NonNull UUID  menuItemId) {
         log.info("Soft deleting menu item with ID: {}", menuItemId);
 
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
@@ -104,7 +105,7 @@ public class MenuItemService {
      */
     // Use by Admin
     @Transactional
-    public void hardDeleteMenuItem(@NonNull Long menuItemId) {
+    public void hardDeleteMenuItem(@NonNull UUID menuItemId) {
         log.info("Hard deleting menu item with ID: {}", menuItemId);
 
         if (!menuItemRepository.existsById(menuItemId)) {
@@ -119,7 +120,7 @@ public class MenuItemService {
      * Get menu item by ID
      */
     @Transactional(readOnly = true)
-    public MenuItemResponse getMenuItemById(@NonNull Long menuItemId) {
+    public MenuItemResponse getMenuItemById(@NonNull UUID menuItemId) {
         log.info("Fetching menu item with ID: {}", menuItemId);
 
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
@@ -133,7 +134,7 @@ public class MenuItemService {
      */
     @Transactional(readOnly = true)
     public Page<MenuItemResponse> getMenuItemsByRestaurant(
-            @NonNull Long restaurantId,
+            @NonNull UUID restaurantId,
             int page,
             int size,
             String sortBy,
@@ -154,7 +155,7 @@ public class MenuItemService {
      * Get all active menu items for a restaurant (no pagination)
      */
     @Transactional(readOnly = true)
-    public List<MenuItemResponse> getAllMenuItemsByRestaurant(@NonNull Long restaurantId) {
+    public List<MenuItemResponse> getAllMenuItemsByRestaurant(@NonNull UUID restaurantId) {
         log.info("Fetching all active menu items for restaurant ID: {}", restaurantId);
 
         List<MenuItem> menuItems = menuItemRepository.findByRestaurantIdAndIsActiveTrueAndIsAvailableTrue(restaurantId);
@@ -165,7 +166,7 @@ public class MenuItemService {
      * Search menu items by name
      */
     @Transactional(readOnly = true)
-    public List<MenuItemResponse> searchMenuItems(@NonNull Long restaurantId, String keyword) {
+    public List<MenuItemResponse> searchMenuItems(@NonNull UUID restaurantId, String keyword) {
         log.info("Searching menu items for restaurant ID: {} with keyword: {}", restaurantId, keyword);
 
         List<MenuItem> menuItems = menuItemRepository.searchByRestaurantAndName(restaurantId, keyword);
@@ -176,7 +177,7 @@ public class MenuItemService {
      * Get menu items by category
      */
     @Transactional(readOnly = true)
-    public List<MenuItemResponse> getMenuItemsByCategory(@NonNull Long restaurantId, String category) {
+    public List<MenuItemResponse> getMenuItemsByCategory(@NonNull UUID restaurantId, String category) {
         log.info("Fetching menu items for restaurant ID: {} with category: {}", restaurantId, category);
 
         List<MenuItem> menuItems = menuItemRepository.findByRestaurantIdAndCategoryAndIsActiveTrue(restaurantId, category);
@@ -187,7 +188,7 @@ public class MenuItemService {
      * Get popular menu items for a restaurant
      */
     @Transactional(readOnly = true)
-    public List<MenuItemResponse> getPopularMenuItems(@NonNull Long restaurantId, int limit) {
+    public List<MenuItemResponse> getPopularMenuItems(@NonNull UUID restaurantId, int limit) {
         log.info("Fetching popular menu items for restaurant ID: {} (limit: {})", restaurantId, limit);
 
         Pageable pageable = PageRequest.of(0, limit);
@@ -199,7 +200,7 @@ public class MenuItemService {
      * Toggle menu item availability
      */
     @Transactional
-    public MenuItemResponse toggleAvailability(@NonNull Long menuItemId) {
+    public MenuItemResponse toggleAvailability(@NonNull UUID menuItemId) {
         log.info("Toggling availability for menu item ID: {}", menuItemId);
 
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
@@ -217,7 +218,7 @@ public class MenuItemService {
      */
     @Transactional(readOnly = true)
     public List<MenuItemResponse> getMenuItemsByDietaryPreferences(
-            Long restaurantId,
+            UUID restaurantId,
             Boolean vegetarian,
             Boolean vegan,
             Boolean glutenFree) {

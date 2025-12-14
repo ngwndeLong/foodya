@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -16,10 +17,10 @@ import java.time.LocalDateTime;
 public class MenuItemResponse {
 
     @Schema(description = "Menu item ID", example = "1")
-    private Long id;
+    private UUID id;
 
     @Schema(description = "Restaurant ID", example = "1")
-    private Long restaurantId;
+    private UUID restaurantId;
 
     @Schema(description = "Restaurant name", example = "The Italian Corner")
     private String restaurantName;

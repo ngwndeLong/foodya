@@ -8,15 +8,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
+public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
 
     // Find by name
     Optional<Restaurant> findByName(String name);
 
     // Find by owner
-    List<Restaurant> findByOwnerId(Long ownerId);
+    List<Restaurant> findByOwnerId(UUID ownerId);
 
     // Find active restaurants
     List<Restaurant> findByIsActiveTrue();

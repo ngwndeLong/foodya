@@ -3,6 +3,7 @@ package com.foodya.foodya_backend.restaurant.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -22,8 +23,9 @@ import lombok.NoArgsConstructor;
 public class Restaurant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "UUID", updatable = false, nullable = false)
+    private UUID  id;
 
     @Column(nullable = false)
     private String name;
@@ -79,8 +81,8 @@ public class Restaurant {
     private List<MenuItem> menuItems = new ArrayList<>();
 
     // Relationship with User (owner)
-    @Column(nullable = false)
-    private Long ownerId;
+    @Column(columnDefinition = "UUID")
+    private UUID  ownerId;
 
     // Helper methods
     public void addMenuItem(MenuItem menuItem) {

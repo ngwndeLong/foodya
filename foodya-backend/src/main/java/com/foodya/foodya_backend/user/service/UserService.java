@@ -1,5 +1,7 @@
 package com.foodya.foodya_backend.user.service;
 
+import java.util.UUID;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,7 @@ public class UserService {
     return mapToUserProfileResponse(user);
   }
 
-  public UserProfileResponse getUserById(@NonNull Long userId) {
+  public UserProfileResponse getUserById(@NonNull UUID  userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
     return mapToUserProfileResponse(user);

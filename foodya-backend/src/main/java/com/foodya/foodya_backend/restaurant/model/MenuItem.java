@@ -1,6 +1,7 @@
 package com.foodya.foodya_backend.restaurant.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -22,8 +23,8 @@ import lombok.NoArgsConstructor;
 public class MenuItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID  id;
 
     @Column(nullable = false)
     private String name;
@@ -69,7 +70,7 @@ public class MenuItem {
 
     // Relationship with Restaurant
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JoinColumn(name = "restaurant_id")
     @JsonIgnore
     private Restaurant restaurant;
 

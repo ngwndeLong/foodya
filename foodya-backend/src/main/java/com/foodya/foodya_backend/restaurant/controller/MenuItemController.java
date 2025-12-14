@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/restaurants/{restaurantId}/menu-items")
@@ -43,7 +44,7 @@ public class MenuItemController {
     @PostMapping
     public ResponseEntity<MenuItemResponse> createMenuItem(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Valid @RequestBody MenuItemRequest request) {
 
         MenuItemResponse response = menuItemService.createMenuItem(restaurantId, request);
@@ -62,9 +63,9 @@ public class MenuItemController {
     @PutMapping("/{menuItemId}")
     public ResponseEntity<MenuItemResponse> updateMenuItem(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Menu item ID", example = "1")
-            @PathVariable Long menuItemId,
+            @PathVariable UUID menuItemId,
             @Valid @RequestBody MenuItemRequest request) {
 
         MenuItemResponse response = menuItemService.updateMenuItem(menuItemId, request);
@@ -82,9 +83,9 @@ public class MenuItemController {
     @DeleteMapping("/{menuItemId}")
     public ResponseEntity<Void> softDeleteMenuItem(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Menu item ID", example = "1")
-            @PathVariable Long menuItemId) {
+            @PathVariable UUID menuItemId) {
 
         menuItemService.softDeleteMenuItem(menuItemId);
         return ResponseEntity.noContent().build();
@@ -101,9 +102,9 @@ public class MenuItemController {
     @DeleteMapping("/{menuItemId}/hard")
     public ResponseEntity<Void> hardDeleteMenuItem(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Menu item ID", example = "1")
-            @PathVariable Long menuItemId) {
+            @PathVariable UUID menuItemId) {
 
         menuItemService.hardDeleteMenuItem(menuItemId);
         return ResponseEntity.noContent().build();
@@ -120,9 +121,9 @@ public class MenuItemController {
     @GetMapping("/{menuItemId}")
     public ResponseEntity<MenuItemResponse> getMenuItemById(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Menu item ID", example = "1")
-            @PathVariable Long menuItemId) {
+            @PathVariable UUID menuItemId) {
 
         MenuItemResponse response = menuItemService.getMenuItemById(menuItemId);
         return ResponseEntity.ok(response);
@@ -138,7 +139,7 @@ public class MenuItemController {
     @GetMapping
     public ResponseEntity<Page<MenuItemResponse>> getMenuItems(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Page number (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size", example = "10")
@@ -160,7 +161,7 @@ public class MenuItemController {
     @GetMapping("/all")
     public ResponseEntity<List<MenuItemResponse>> getAllMenuItems(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId) {
+            @PathVariable UUID restaurantId) {
 
         List<MenuItemResponse> response = menuItemService.getAllMenuItemsByRestaurant(restaurantId);
         return ResponseEntity.ok(response);
@@ -173,7 +174,7 @@ public class MenuItemController {
     @GetMapping("/search")
     public ResponseEntity<List<MenuItemResponse>> searchMenuItems(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Search keyword", example = "pizza")
             @RequestParam String keyword) {
 
@@ -188,7 +189,7 @@ public class MenuItemController {
     @GetMapping("/category/{category}")
     public ResponseEntity<List<MenuItemResponse>> getMenuItemsByCategory(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Category name", example = "Main Course")
             @PathVariable String category) {
 
@@ -203,7 +204,7 @@ public class MenuItemController {
     @GetMapping("/popular")
     public ResponseEntity<List<MenuItemResponse>> getPopularMenuItems(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Number of items to return", example = "5")
             @RequestParam(defaultValue = "5") int limit) {
 
@@ -218,9 +219,9 @@ public class MenuItemController {
     @PatchMapping("/{menuItemId}/toggle-availability")
     public ResponseEntity<MenuItemResponse> toggleAvailability(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Menu item ID", example = "1")
-            @PathVariable Long menuItemId) {
+            @PathVariable UUID menuItemId) {
 
         MenuItemResponse response = menuItemService.toggleAvailability(menuItemId);
         return ResponseEntity.ok(response);
@@ -233,7 +234,7 @@ public class MenuItemController {
     @GetMapping("/dietary")
     public ResponseEntity<List<MenuItemResponse>> getMenuItemsByDietaryPreferences(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long restaurantId,
+            @PathVariable UUID restaurantId,
             @Parameter(description = "Vegetarian items only", example = "true")
             @RequestParam(required = false) Boolean vegetarian,
             @Parameter(description = "Vegan items only", example = "false")

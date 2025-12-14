@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/restaurants")
@@ -58,7 +59,7 @@ public class RestaurantController {
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantResponse> getRestaurantById(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long id) {
+            @PathVariable UUID id) {
         RestaurantResponse restaurant = restaurantService.getRestaurantById(id);
         return ResponseEntity.ok(restaurant);
     }
@@ -152,7 +153,7 @@ public class RestaurantController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRestaurantById(
             @Parameter(description = "Restaurant ID", example = "1")
-            @PathVariable Long id) {
+            @PathVariable UUID id) {
         restaurantService.deleteRestaurantById(id);
         return ResponseEntity.ok().build();
     }

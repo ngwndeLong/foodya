@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +46,7 @@ public class RestaurantService {
      * Get restaurant by ID
      */
     @Transactional(readOnly = true)
-    public RestaurantResponse getRestaurantById(@NonNull Long id) {
+    public RestaurantResponse getRestaurantById(@NonNull UUID id) {
         log.info("Fetching restaurant with id: {}", id);
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found with id: " + id));
@@ -93,7 +94,7 @@ public class RestaurantService {
     }
     // Delete restaurant by ID (for admin)
     @Transactional(readOnly = false)
-    public void deleteRestaurantById(@NonNull Long id) {
+    public void deleteRestaurantById(@NonNull UUID id) {
         log.info("Deleting restaurant with id: {}", id);
         if (!restaurantRepository.existsById(id)) {
             throw new RuntimeException("Restaurant not found with id: " + id);

@@ -10,30 +10,31 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
+public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
 
   // Find by restaurant
-  List<MenuItem> findByRestaurantId(Long restaurantId);
+  List<MenuItem> findByRestaurantId(UUID restaurantId);
 
   // Find active menu items by restaurant
-  List<MenuItem> findByRestaurantIdAndIsActiveTrue(Long restaurantId);
+  List<MenuItem> findByRestaurantIdAndIsActiveTrue(UUID restaurantId);
 
   // Find available menu items by restaurant
-  List<MenuItem> findByRestaurantIdAndIsAvailableTrue(Long restaurantId);
+  List<MenuItem> findByRestaurantIdAndIsAvailableTrue(UUID restaurantId);
 
   // Find by category
   List<MenuItem> findByCategory(String category);
 
   // Find by restaurant and category
-  List<MenuItem> findByRestaurantIdAndCategory(Long restaurantId, String category);
+  List<MenuItem> findByRestaurantIdAndCategory(UUID restaurantId, String category);
 
   // Find by restaurant and category (active only)
-  List<MenuItem> findByRestaurantIdAndCategoryAndIsActiveTrue(Long restaurantId, String category);
+  List<MenuItem> findByRestaurantIdAndCategoryAndIsActiveTrue(UUID restaurantId, String category);
 
   // Find by restaurant and category (active and available only)
-  List<MenuItem> findByRestaurantIdAndIsActiveTrueAndIsAvailableTrue(Long restaurantId);
+  List<MenuItem> findByRestaurantIdAndIsActiveTrueAndIsAvailableTrue(UUID restaurantId);
 
   // Search by name
   @Query("SELECT m FROM MenuItem m WHERE LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND m.isActive = true")
@@ -41,7 +42,7 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
 
   // Search by restaurant and name
   @Query("SELECT m FROM MenuItem m WHERE m.restaurant.id = :restaurantId AND LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND m.isActive = true")
-  List<MenuItem> searchByRestaurantAndName(@Param("restaurantId") Long restaurantId, @Param("keyword") String keyword);
+  List<MenuItem> searchByRestaurantAndName(@Param("restaurantId") UUID restaurantId, @Param("keyword") String keyword);
 
   // Find by price range
   @Query("SELECT m FROM MenuItem m WHERE m.price BETWEEN :minPrice AND :maxPrice AND m.isActive = true")
@@ -49,7 +50,7 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
 
   // Find by restaurant and price range
   @Query("SELECT m FROM MenuItem m WHERE m.restaurant.id = :restaurantId AND m.price BETWEEN :minPrice AND :maxPrice AND m.isActive = true")
-  List<MenuItem> findByRestaurantAndPriceRange(@Param("restaurantId") Long restaurantId,
+  List<MenuItem> findByRestaurantAndPriceRange(@Param("restaurantId") UUID restaurantId,
       @Param("minPrice") Double minPrice, @Param("maxPrice") Double maxPrice);
 
   // Find vegetarian items
@@ -66,7 +67,7 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
 
   // Find popular items by restaurant
   @Query("SELECT m FROM MenuItem m WHERE m.restaurant.id = :restaurantId AND m.isActive = true ORDER BY m.orderCount DESC")
-  Page<MenuItem> findPopularItemsByRestaurant(@Param("restaurantId") Long restaurantId, Pageable pageable);
+  Page<MenuItem> findPopularItemsByRestaurant(@Param("restaurantId") UUID restaurantId, Pageable pageable);
 
   // Find items by dietary preferences
   @Query("SELECT m FROM MenuItem m WHERE m.restaurant.id = :restaurantId " +
@@ -75,13 +76,13 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
       "AND (:glutenFree IS NULL OR m.isGlutenFree = :glutenFree) " +
       "AND m.isActive = true")
   List<MenuItem> findByDietaryPreferences(
-      @Param("restaurantId") Long restaurantId,
+      @Param("restaurantId") UUID restaurantId,
       @Param("vegetarian") Boolean vegetarian,
       @Param("vegan") Boolean vegan,
       @Param("glutenFree") Boolean glutenFree);
 
-  Page<MenuItem> findByRestaurantIdAndIsActiveTrueAndIsAvailableTrue(Long restaurantId, Pageable pageable);
+  Page<MenuItem> findByRestaurantIdAndIsActiveTrueAndIsAvailableTrue(UUID restaurantId, Pageable pageable);
 
   // Check if menu item exists by name and restaurant
-  boolean existsByNameAndRestaurantId(String name, Long restaurantId);
+  boolean existsByNameAndRestaurantId(String name, UUID restaurantId);
 }
