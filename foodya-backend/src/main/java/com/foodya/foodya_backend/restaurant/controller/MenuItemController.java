@@ -3,18 +3,22 @@ package com.foodya.foodya_backend.restaurant.controller;
 import com.foodya.foodya_backend.restaurant.dto.MenuItemRequest;
 import com.foodya.foodya_backend.restaurant.dto.MenuItemResponse;
 import com.foodya.foodya_backend.restaurant.service.MenuItemService;
+import com.foodya.foodya_backend.restaurant.service.OwnershipService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,10 +31,12 @@ import java.util.UUID;
 public class MenuItemController {
 
     private final MenuItemService menuItemService;
+    private OwnershipService ownershipService;
 
     @Operation(
         summary = "Create new menu item",
-        description = "Add a new menu item to a restaurant's menu"
+        description = "Add a new menu item to a restaurant's menu",
+        security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -41,25 +47,33 @@ public class MenuItemController {
         @ApiResponse(responseCode = "400", description = "Invalid input or duplicate item name"),
         @ApiResponse(responseCode = "404", description = "Restaurant not found")
     })
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     @PostMapping
     public ResponseEntity<MenuItemResponse> createMenuItem(
             @Parameter(description = "Restaurant ID", example = "1")
             @PathVariable UUID restaurantId,
             @Valid @RequestBody MenuItemRequest request) {
 
+
+        // Check if ownership
+        if (!ownershipService.isAdmin() && !ownershipService.isRestaurantOwner(restaurantId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         MenuItemResponse response = menuItemService.createMenuItem(restaurantId, request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Operation(
         summary = "Update menu item",
-        description = "Update an existing menu item's details"
+        description = "Update an existing menu item's details",
+        security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Menu item updated successfully"),
         @ApiResponse(responseCode = "404", description = "Menu item not found"),
         @ApiResponse(responseCode = "400", description = "Invalid input")
     })
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     @PutMapping("/{menuItemId}")
     public ResponseEntity<MenuItemResponse> updateMenuItem(
             @Parameter(description = "Restaurant ID", example = "1")
@@ -68,18 +82,24 @@ public class MenuItemController {
             @PathVariable UUID menuItemId,
             @Valid @RequestBody MenuItemRequest request) {
 
+        // Check if ownership
+        if (!ownershipService.isAdmin() && !ownershipService.isRestaurantOwner(restaurantId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         MenuItemResponse response = menuItemService.updateMenuItem(menuItemId, request);
         return ResponseEntity.ok(response);
     }
 
     @Operation(
         summary = "Soft delete menu item",
-        description = "Hide menu item from menu (set isActive = false)"
+        description = "Hide menu item from menu (set isActive = false)",
+        security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Menu item soft deleted successfully"),
         @ApiResponse(responseCode = "404", description = "Menu item not found")
     })
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     @DeleteMapping("/{menuItemId}")
     public ResponseEntity<Void> softDeleteMenuItem(
             @Parameter(description = "Restaurant ID", example = "1")
@@ -87,18 +107,24 @@ public class MenuItemController {
             @Parameter(description = "Menu item ID", example = "1")
             @PathVariable UUID menuItemId) {
 
+        // Check if ownership
+        if (!ownershipService.isAdmin() && !ownershipService.isRestaurantOwner(restaurantId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         menuItemService.softDeleteMenuItem(menuItemId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(
         summary = "Hard delete menu item",
-        description = "Permanently delete menu item from database (admin only)"
+        description = "Permanently delete menu item from database (admin only)",
+        security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Menu item permanently deleted"),
         @ApiResponse(responseCode = "404", description = "Menu item not found")
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{menuItemId}/hard")
     public ResponseEntity<Void> hardDeleteMenuItem(
             @Parameter(description = "Restaurant ID", example = "1")
@@ -106,6 +132,10 @@ public class MenuItemController {
             @Parameter(description = "Menu item ID", example = "1")
             @PathVariable UUID menuItemId) {
 
+        // Check if ownership
+        if (!ownershipService.isAdmin())  {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         menuItemService.hardDeleteMenuItem(menuItemId);
         return ResponseEntity.noContent().build();
     }

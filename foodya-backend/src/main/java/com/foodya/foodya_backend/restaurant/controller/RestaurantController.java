@@ -8,9 +8,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public class RestaurantController {
 
     @Operation(
         summary = "Get all restaurants",
-        description = "Retrieve all active restaurants"
+        description = "Public endpoint"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -37,13 +39,11 @@ public class RestaurantController {
     })
     @GetMapping
     public ResponseEntity<List<RestaurantResponse>> getAllRestaurants() {
-        List<RestaurantResponse> restaurants = restaurantService.getAllRestaurants();
-        return ResponseEntity.ok(restaurants);
+        return ResponseEntity.ok(restaurantService.getAllRestaurants());
     }
 
     @Operation(
-        summary = "Get restaurant by ID",
-        description = "Retrieve a specific restaurant by its ID"
+        summary = "Get restaurant by ID"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -60,13 +60,11 @@ public class RestaurantController {
     public ResponseEntity<RestaurantResponse> getRestaurantById(
             @Parameter(description = "Restaurant ID", example = "1")
             @PathVariable UUID id) {
-        RestaurantResponse restaurant = restaurantService.getRestaurantById(id);
-        return ResponseEntity.ok(restaurant);
+        return ResponseEntity.ok(restaurantService.getRestaurantById(id));
     }
 
     @Operation(
-        summary = "Search restaurants",
-        description = "Search restaurants by name (case-insensitive)"
+        summary = "Search restaurants"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -78,13 +76,11 @@ public class RestaurantController {
     public ResponseEntity<List<RestaurantResponse>> searchRestaurants(
             @Parameter(description = "Search keyword", example = "Italian")
             @RequestParam String keyword) {
-        List<RestaurantResponse> restaurants = restaurantService.searchRestaurants(keyword);
-        return ResponseEntity.ok(restaurants);
+        return ResponseEntity.ok(restaurantService.searchRestaurants(keyword));
     }
 
     @Operation(
-        summary = "Get restaurants by cuisine",
-        description = "Filter restaurants by cuisine type"
+        summary = "Get restaurants by cuisine"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -96,13 +92,11 @@ public class RestaurantController {
     public ResponseEntity<List<RestaurantResponse>> getRestaurantsByCuisine(
             @Parameter(description = "Cuisine type", example = "Italian")
             @PathVariable String cuisine) {
-        List<RestaurantResponse> restaurants = restaurantService.getRestaurantsByCuisine(cuisine);
-        return ResponseEntity.ok(restaurants);
+        return ResponseEntity.ok(restaurantService.getRestaurantsByCuisine(cuisine));
     }
 
     @Operation(
-        summary = "Get popular restaurants",
-        description = "Get restaurants sorted by popularity (total reviews and rating)"
+        summary = "Get popular restaurants"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -112,13 +106,11 @@ public class RestaurantController {
     })
     @GetMapping("/popular")
     public ResponseEntity<List<RestaurantResponse>> getPopularRestaurants() {
-        List<RestaurantResponse> restaurants = restaurantService.getPopularRestaurants();
-        return ResponseEntity.ok(restaurants);
+        return ResponseEntity.ok(restaurantService.getPopularRestaurants());
     }
 
     @Operation(
-        summary = "Get restaurants by minimum rating",
-        description = "Filter restaurants with rating greater than or equal to specified value"
+        summary = "Get restaurants by minimum rating"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -130,15 +122,13 @@ public class RestaurantController {
     public ResponseEntity<List<RestaurantResponse>> getRestaurantsByRating(
             @Parameter(description = "Minimum rating", example = "4.0")
             @RequestParam(defaultValue = "4.0") Double minRating) {
-        List<RestaurantResponse> restaurants = restaurantService.getRestaurantsByMinRating(minRating);
-        return ResponseEntity.ok(restaurants);
+        return ResponseEntity.ok(restaurantService.getRestaurantsByMinRating(minRating));
     }
 
-
-    // Delete restaurant by ID (for admin)
     @Operation(
-        summary = "Delete restaurant by ID",
-        description = "Delete a specific restaurant by its ID (admin only)"
+        summary = "Delete restaurant by ID (Admin only)",
+        description = "Delete a specific restaurant by its ID (admin only)",
+        security = @SecurityRequirement(name = "BearerAuth")
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -150,6 +140,7 @@ public class RestaurantController {
             description = "Restaurant not found"
         )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRestaurantById(
             @Parameter(description = "Restaurant ID", example = "1")
